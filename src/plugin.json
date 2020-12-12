@@ -1,0 +1,46 @@
+{
+  "type": "datasource",
+  "name": "NOAA Tides and Currents",
+  "id": "ryantxu-noaa-datasource",
+
+  "backend": true,
+  "executable": "gpx_noaa",
+
+  "metrics": true,
+  "alerting": true,
+  "annotations": true,
+  
+  "info": {
+    "description": "NOAA Tides and Currents",
+    "author": {
+      "name": "Ryan McKinley"
+    },
+    "keywords": ["datasource","noaa","tides","currents","science"],
+    "logos": {
+      "small": "img/noaa.svg",
+      "large": "img/noaa.svg"
+    },
+    "links": [
+      {
+        "name": "NOAA Tides and Currents",
+        "url": "https://tidesandcurrents.noaa.gov/"
+      },
+      {
+        "name": "NOAA Tides and Currents (API Info)",
+        "url": "https://api.tidesandcurrents.noaa.gov/api/prod/"
+      },
+      {
+        "name": "Plugin",
+        "url": "https://github.com/ryantxu/noaa-datasource"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaVersion": "7.3.0",
+    "grafanaDependency": ">=7.3.0",
+    "plugins": []
+  }
+}
