@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/grafana-plugin-sdk-go/experimental"
@@ -34,19 +35,25 @@ import (
 // "f": "0,0"
 
 type NOAAClient struct {
-	Client experimental.Client // https://api.tidesandcurrents.noaa.gov/api/prod/
+	Client  experimental.Client // https://api.tidesandcurrents.noaa.gov/api/prod/
+	Station CGIClient
 }
 
 func NewNOAAClient() NOAAClient {
 	return NOAAClient{
-		Client: experimental.NewRestClient("https://api.tidesandcurrents.noaa.gov/api/prod/", map[string]string{}),
+		Client:  experimental.NewRestClient("https://api.tidesandcurrents.noaa.gov/api/prod/", map[string]string{}),
+		Station: NewCGIClient(),
 	}
 }
 
 const layoutXXX = "20060102 15:04" // "yyyyMMdd HH:mm"
 
-func getQueryString(q *models.NOAAQuery) (string, error) {
-	qstr := "units=metric&time_zone=gmt&application=Grafana&format=json&datum=STND"
+func (c *NOAAClient) getQueryString(q *models.NOAAQuery) (string, error) {
+	if q.Product == "high_low" && q.Date == "latest" {
+		return c.Station.getQueryString(q)
+	}
+
+	qstr := "time_zone=gmt&application=Grafana&format=json&datum=STND"
 	if q.Station < 100 {
 		return "", fmt.Errorf("missing station")
 	}
@@ -54,9 +61,27 @@ func getQueryString(q *models.NOAAQuery) (string, error) {
 		return "", fmt.Errorf("missing product")
 	}
 
-	qstr += fmt.Sprintf("&begin_date=%s", url.QueryEscape(q.TimeRange.From.Format(layoutXXX)))
-	qstr += fmt.Sprintf("&end_date=%s", url.QueryEscape(q.TimeRange.To.Format(layoutXXX)))
-	// qstr += "&range=24"
+	if q.Units == "english" {
+		qstr += "&units=english"
+	} else {
+		qstr += "&units=metric"
+	}
+
+	if q.Date == "" || q.Date == "query" {
+		b := q.TimeRange.From
+		e := q.TimeRange.To.Add(time.Minute)
+
+		b = time.Date(b.Year(), b.Month(), b.Day(), b.Hour(), b.Minute(), 0, 0, b.Location())
+		e = time.Date(e.Year(), e.Month(), e.Day(), e.Hour(), e.Minute(), 0, 0, e.Location())
+
+		bb := b.Format(layoutXXX)
+		ee := e.Format(layoutXXX)
+
+		qstr += fmt.Sprintf("&begin_date=%s", url.QueryEscape(bb))
+		qstr += fmt.Sprintf("&end_date=%s", url.QueryEscape(ee))
+	} else {
+		qstr += fmt.Sprintf("&date=%s", q.Date)
+	}
 
 	qstr += fmt.Sprintf("&station=%d", q.Station)
 	qstr += fmt.Sprintf("&product=%s", q.Product)
@@ -64,7 +89,11 @@ func getQueryString(q *models.NOAAQuery) (string, error) {
 }
 
 func (c *NOAAClient) Fetch(ctx context.Context, q *models.NOAAQuery) ([]byte, error) {
-	qstr, err := getQueryString(q)
+	if q.Product == "high_low" && q.Date == "latest" {
+		return c.Station.Fetch(ctx, q)
+	}
+
+	qstr, err := c.getQueryString(q)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +101,11 @@ func (c *NOAAClient) Fetch(ctx context.Context, q *models.NOAAQuery) ([]byte, er
 }
 
 func (c *NOAAClient) Query(ctx context.Context, q *models.NOAAQuery) data.Framer {
-	qstr, err := getQueryString(q)
+	if q.Product == "high_low" && q.Date == "latest" {
+		return c.Station.Query(ctx, q)
+	}
+
+	qstr, err := c.getQueryString(q)
 	if err != nil {
 		return &models.ErrorFramer{Error: err}
 	}
@@ -81,16 +114,10 @@ func (c *NOAAClient) Query(ctx context.Context, q *models.NOAAQuery) data.Framer
 		return &models.ErrorFramer{Error: err}
 	}
 
-	var val data.Framer
-	switch q.Product {
-	case "predictions":
-		val = &PredictionResponse{}
-	case "water_level":
-		val = &WaterLevelResponse{}
-	default:
-		return &models.ErrorFramer{Error: fmt.Errorf("unknown product: %s", q.Product)}
+	val := &DataResponse{
+		Query: q,
+		URL:   qstr,
 	}
-
 	if err := json.Unmarshal(bytes, val); err != nil {
 		return &models.ErrorFramer{Error: err}
 	}

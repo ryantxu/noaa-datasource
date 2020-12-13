@@ -10,12 +10,12 @@ import (
 	"github.com/ryantxu/noaa-datasource/pkg/testdata"
 )
 
-func TestPredictions(t *testing.T) {
-	doPredictions(t).run(t)
+func TestWind(t *testing.T) {
+	doWind(t).run(t)
 }
 
-var doPredictions testServerScenarioFn = func(t *testing.T) *testScenario {
-	testFilePath := "predictions"
+var doWind testServerScenarioFn = func(t *testing.T) *testScenario {
+	testFilePath := "wind"
 	return &testScenario{
 		name:             testFilePath,
 		mockResponsePath: path.Join("../../testdata", testFilePath+".json"),
@@ -32,7 +32,6 @@ var doPredictions testServerScenarioFn = func(t *testing.T) *testScenario {
 				JSON: testdata.SerializeStruct(t, &models.NOAAQuery{
 					Station: 9414750,
 					Product: testFilePath,
-					Date:    "latest", //"today", //"recent", //"latest",
 				}),
 			},
 		},

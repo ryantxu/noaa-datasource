@@ -14,6 +14,8 @@ const (
 type NOAAQuery struct {
 	Station int32  `json:"station,omitempty"`
 	Product string `json:"product,omitempty"`
+	Units   string `json:"units,omitempty"` //  'metric' | 'english';
+	Date    string `json:"date,omitempty"`  //  'query' | 'today' | 'recent';...
 
 	// These are added from the base query
 	Interval      time.Duration     `json:"-"`

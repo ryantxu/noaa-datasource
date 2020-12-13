@@ -14,6 +14,7 @@ export enum TCProduct {
   hourly_height = 'hourly_height',
   high_low = 'high_low',
   daily_mean = 'daily_mean',
+  monthly_mean = 'monthly_mean',
   one_minute_water_level = 'one_minute_water_level',
   predictions = 'predictions',
   datums = 'datums',
@@ -26,11 +27,26 @@ export enum QueryType {
   TidesAndCurrents = 'TidesAndCurrents',
 }
 
+// Matches https://github.com/ryantxu/noaa-datasource/blob/main/pkg/models/query.go#L3
+export enum QueryDate {
+  Query = 'query',
+  Today = 'today',
+  Recent = 'recent',
+  Latest = 'latest',
+}
+
+// date=today
+// The last 3 days of data
+// date=recent
+// The last data point available within the last 18 min
+// date=latest
+
 export interface NOAAQuery extends DataQuery {
   queryType?: QueryType;
   station?: number;
   product?: TCProduct;
   units?: 'metric' | 'english';
+  date?: QueryDate;
 }
 
 /**
