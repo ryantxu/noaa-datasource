@@ -35,24 +35,18 @@ import (
 // "f": "0,0"
 
 type NOAAClient struct {
-	Client  experimental.Client // https://api.tidesandcurrents.noaa.gov/api/prod/
-	Station CGIClient
+	Client experimental.Client // https://api.tidesandcurrents.noaa.gov/api/prod/
 }
 
 func NewNOAAClient() NOAAClient {
 	return NOAAClient{
-		Client:  experimental.NewRestClient("https://api.tidesandcurrents.noaa.gov/api/prod/", map[string]string{}),
-		Station: NewCGIClient(),
+		Client: experimental.NewRestClient("https://api.tidesandcurrents.noaa.gov/api/prod/", map[string]string{}),
 	}
 }
 
 const layoutXXX = "20060102 15:04" // "yyyyMMdd HH:mm"
 
 func (c *NOAAClient) getQueryString(q *models.NOAAQuery) (string, error) {
-	if q.Product == "high_low" && q.Date == "latest" {
-		return c.Station.getQueryString(q)
-	}
-
 	qstr := "time_zone=gmt&application=Grafana&format=json&datum=STND"
 	if q.Station < 100 {
 		return "", fmt.Errorf("missing station")
@@ -89,10 +83,6 @@ func (c *NOAAClient) getQueryString(q *models.NOAAQuery) (string, error) {
 }
 
 func (c *NOAAClient) Fetch(ctx context.Context, q *models.NOAAQuery) ([]byte, error) {
-	if q.Product == "high_low" && q.Date == "latest" {
-		return c.Station.Fetch(ctx, q)
-	}
-
 	qstr, err := c.getQueryString(q)
 	if err != nil {
 		return nil, err
@@ -101,10 +91,6 @@ func (c *NOAAClient) Fetch(ctx context.Context, q *models.NOAAQuery) ([]byte, er
 }
 
 func (c *NOAAClient) Query(ctx context.Context, q *models.NOAAQuery) data.Framer {
-	if q.Product == "high_low" && q.Date == "latest" {
-		return c.Station.Query(ctx, q)
-	}
-
 	qstr, err := c.getQueryString(q)
 	if err != nil {
 		return &models.ErrorFramer{Error: err}

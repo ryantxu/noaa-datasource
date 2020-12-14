@@ -32,7 +32,7 @@ var doHighLow testServerScenarioFn = func(t *testing.T) *testScenario {
 				JSON: testdata.SerializeStruct(t, &models.NOAAQuery{
 					Station: 9414750,
 					Product: testFilePath,
-					Date:    "latest", //"recent", //"latest",
+					//	Date:    "latest", //"recent", //"latest",
 				}),
 			},
 		},

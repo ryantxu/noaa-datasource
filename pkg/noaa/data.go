@@ -90,6 +90,8 @@ func (r *DataResponse) Frames() (data.Frames, error) {
 	}
 
 	switch r.Query.Product {
+	case "next_high_low":
+		fallthrough
 	case "high_low":
 		fields = append(fields, fieldInfo{
 			name: data.TimeSeriesValueFieldName,

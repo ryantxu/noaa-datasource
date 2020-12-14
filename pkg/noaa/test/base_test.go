@@ -65,9 +65,6 @@ func runTestScenario(t *testing.T, scenario *testScenario) {
 		datasource := &plugin.Datasource{
 			Client: noaa.NOAAClient{
 				Client: NewMockClient(scenario.mockResponsePath),
-				Station: noaa.CGIClient{
-					Client: NewMockClient(scenario.mockResponsePath),
-				},
 			},
 		}
 		qdr, err := datasource.QueryData(ctx, req)
