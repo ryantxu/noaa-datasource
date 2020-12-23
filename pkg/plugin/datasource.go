@@ -18,10 +18,14 @@ type Datasource struct {
 	Client noaa.NOAAClient
 }
 
-func GetDatasourceServeOpts() datasource.ServeOpts {
-	handler := &Datasource{
+func NewDatasource() *Datasource {
+	return &Datasource{
 		Client: noaa.NewNOAAClient(),
 	}
+}
+
+func GetDatasourceServeOpts() datasource.ServeOpts {
+	handler := NewDatasource()
 
 	return datasource.ServeOpts{
 		CheckHealthHandler:  handler,
@@ -67,55 +71,73 @@ func (ds *Datasource) CallResource(ctx context.Context, req *backend.CallResourc
 
 func (ds *Datasource) getFramer(ctx context.Context, query *models.NOAAQuery) data.Framer {
 	if query.Product == "high_low" && query.Date == "latest" {
-		query.Product = "predictions"
-		query.Date = "query"
-		query.TimeRange.From = time.Now().UTC().Truncate(time.Minute)
-		query.TimeRange.To = query.TimeRange.From.Add(time.Hour * 12)
-
-		points, ok := ds.Client.Query(ctx, query).(*noaa.DataResponse)
-		if !ok {
-			return &models.ErrorFramer{Error: fmt.Errorf("erro converting")}
-		}
-
-		idx := 0
-		v0, _ := strconv.ParseFloat(points.Predictions[0].V, 64)
-		v1, _ := strconv.ParseFloat(points.Predictions[1].V, 64)
-		ty := "Low"
-		if v1 > v0 {
-			ty = "High"
-		}
-		for i := 1; i < len(points.Predictions); i++ {
-			v1, err := strconv.ParseFloat(points.Predictions[i].V, 64)
-			if err == nil {
-				if ty == "High" {
-					if v1 < v0 {
-						idx = i
-						break
-					}
-				} else {
-					if v1 > v0 {
-						idx = i
-						break
-					}
-				}
-				v0 = v1
-			}
-		}
-
-		row := points.Predictions[idx]
-		row.TY = ty
-		points.Data = []noaa.Datum{row}
-		points.Predictions = []noaa.Datum{}
-		query.Product = "next_high_low"
-
-		// for _, row := range points.Data {
-		// 	t, err := time.ParseInLocation("2006-01-02 15:04", row.T, time.UTC)
-		// 	if err != nil && t.After(time.Now()) {
-		// 		points.Data =
-		// 		return points // Only the next one
-		// 	}
-		// }
-		return points
+		return ds.getNextHighLow(ctx, query)
 	}
 	return ds.Client.Query(ctx, query)
+}
+
+func (ds *Datasource) getNextHighLow(ctx context.Context, query *models.NOAAQuery) data.Framer {
+	query.Product = "predictions"
+	query.Date = "query"
+	query.TimeRange.From = time.Now().UTC().Truncate(time.Minute)
+	query.TimeRange.To = query.TimeRange.From.Add(time.Hour * 12)
+
+	points, ok := ds.Client.Query(ctx, query).(*noaa.DataResponse)
+	if !ok {
+		return &models.ErrorFramer{Error: fmt.Errorf("erro converting")}
+	}
+
+	idx := 0
+	v0, _ := strconv.ParseFloat(points.Predictions[0].V, 64)
+	v1, _ := strconv.ParseFloat(points.Predictions[1].V, 64)
+	ty := "Low"
+	if v1 > v0 {
+		ty = "High"
+	}
+	for i := 1; i < len(points.Predictions); i++ {
+		v1, err := strconv.ParseFloat(points.Predictions[i].V, 64)
+		if err == nil {
+			if ty == "High" {
+				if v1 < v0 {
+					idx = i
+					break
+				}
+			} else {
+				if v1 > v0 {
+					idx = i
+					break
+				}
+			}
+			v0 = v1
+		}
+	}
+
+	row := points.Predictions[idx]
+	row.TY = ty
+	points.Data = []noaa.Datum{row}
+	points.Predictions = []noaa.Datum{}
+	query.Product = "next_high_low"
+
+	// for _, row := range points.Data {
+	// 	t, err := time.ParseInLocation("2006-01-02 15:04", row.T, time.UTC)
+	// 	if err != nil && t.After(time.Now()) {
+	// 		points.Data =
+	// 		return points // Only the next one
+	// 	}
+	// }
+	return points
+}
+
+// GetNextHighLow is a helper for the rasberry pi project
+func GetNextHighLow(station int32, units string) (*data.Frame, error) {
+	query := &models.NOAAQuery{
+		Station: station,
+		Units:   units,
+	}
+	ds := NewDatasource()
+	frames, err := ds.getNextHighLow(context.Background(), query).Frames()
+	if err != nil || len(frames) < 1 {
+		return nil, err
+	}
+	return frames[0], nil
 }
