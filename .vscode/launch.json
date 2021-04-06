@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run standalong plugin",
+            "name": "Run standalone plugin",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -10,7 +10,7 @@
             "env": {},
             "args": [
                 "--standalone=true",
-                "--address=:1212" // ok???
+                "--address=:1212" // bind to port tcp://localhost:1212
             ]
         }
     ]
