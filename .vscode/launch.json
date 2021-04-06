@@ -1,0 +1,17 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run standalong plugin",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/pkg/main.go",
+            "env": {},
+            "args": [
+                "--standalone=true",
+                "--address=:1212" // ok???
+            ]
+        }
+    ]
+}
