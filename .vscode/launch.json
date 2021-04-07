@@ -10,7 +10,6 @@
             "env": {},
             "args": [
                 "--standalone=true",
-                "--address=:1212" // bind to port tcp://localhost:1212
             ]
         }
     ]
