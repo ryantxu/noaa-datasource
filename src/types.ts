@@ -43,7 +43,7 @@ export enum QueryDate {
 
 export interface NOAAQuery extends DataQuery {
   queryType?: QueryType;
-  station?: number;
+  station?: string;
   product?: TCProduct;
   units?: 'metric' | 'english';
   date?: QueryDate;

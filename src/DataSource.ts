@@ -1,10 +1,9 @@
 import { DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
-import { DataSourceWithBackend } from '@grafana/runtime';
+import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
 
-import { NOAAQuery, NOAAOptions } from './types';
+import { NOAAQuery, NOAAOptions, TCProduct } from './types';
 
 export class DataSource extends DataSourceWithBackend<NOAAQuery, NOAAOptions> {
-  // Easy access for QueryEditor
   readonly options: NOAAOptions;
 
   constructor(instanceSettings: DataSourceInstanceSettings<NOAAOptions>) {
@@ -23,22 +22,15 @@ export class DataSource extends DataSourceWithBackend<NOAAQuery, NOAAOptions> {
   }
 
   getQueryDisplayText(query: NOAAQuery): string {
-    return 'TODO: ' + JSON.stringify(query);
+    return JSON.stringify(query);
   }
 
   applyTemplateVariables(query: NOAAQuery, scopedVars: ScopedVars): NOAAQuery {
-    // if (!query.rawQuery) {
-    //   return query;
-    // }
-
-    // const templateSrv = getTemplateSrv();
-    // return {
-    //   ...query,
-    //   database: templateSrv.replace(query.database || '', scopedVars),
-    //   table: templateSrv.replace(query.table || '', scopedVars),
-    //   measure: templateSrv.replace(query.measure || '', scopedVars),
-    //   rawQuery: templateSrv.replace(query.rawQuery), // DO NOT include scopedVars! it uses $__interval_ms!!!!!
-    // };
-    return query;
+    const templateSrv = getTemplateSrv();
+    return {
+      ...query,
+      product: templateSrv.replace(query.product || '', scopedVars) as TCProduct,
+      station: templateSrv.replace(query.station || '', scopedVars),
+    };
   }
 }

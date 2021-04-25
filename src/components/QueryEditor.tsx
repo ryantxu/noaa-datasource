@@ -42,7 +42,7 @@ export class QueryEditor extends PureComponent<Props> {
 
   onStationChange = (txt: string) => {
     const { onChange, query, onRunQuery } = this.props;
-    onChange({ ...query, station: +txt });
+    onChange({ ...query, station: txt });
     onRunQuery();
   };
 
@@ -55,7 +55,7 @@ export class QueryEditor extends PureComponent<Props> {
           <InlineField label="Product" labelWidth={labelWidth} grow={true}>
             <Select
               options={tidesAndCurrentsProducts}
-              value={tidesAndCurrentsProducts.find(v => v.value === query.product)}
+              value={tidesAndCurrentsProducts.find((v) => v.value === query.product)}
               onChange={this.onProductChange}
               placeholder="Select query type"
               menuPlacement="bottom"
@@ -64,7 +64,7 @@ export class QueryEditor extends PureComponent<Props> {
           <InlineField label="Unit">
             <Select
               options={units}
-              value={units.find(v => v.value === query.units) || units[0]}
+              value={units.find((v) => v.value === query.units) || units[0]}
               onChange={this.onUnitsChange}
               placeholder="Select units"
               menuPlacement="bottom"
@@ -73,7 +73,7 @@ export class QueryEditor extends PureComponent<Props> {
           <InlineField label="Date">
             <Select
               options={dateOptions}
-              value={dateOptions.find(v => v.value === query.date) || dateOptions[0]}
+              value={dateOptions.find((v) => v.value === query.date) || dateOptions[0]}
               onChange={this.onDateChange}
               placeholder="Select date"
               menuPlacement="bottom"
