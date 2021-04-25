@@ -4,14 +4,12 @@ import (
 	"os"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
+	"github.com/grafana/grafana-plugin-sdk-go/experimental"
 	"github.com/ryantxu/noaa-datasource/pkg/plugin"
 )
 
 func main() {
-	backend.SetupPluginEnvironment("oas-datasource")
-
-	err := datasource.Serve(plugin.GetDatasourceServeOpts())
+	err := experimental.DoGRPC("noaa-datasource", plugin.GetDatasourceServeOpts())
 
 	// Log any error if we could start the plugin.
 	if err != nil {

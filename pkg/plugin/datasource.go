@@ -129,9 +129,9 @@ func (ds *Datasource) getNextHighLow(ctx context.Context, query *models.NOAAQuer
 }
 
 // GetNextHighLow is a helper for the rasberry pi project
-func GetNextHighLow(station int32, units string) (*data.Frame, error) {
+func GetNextHighLow(station int64, units string) (*data.Frame, error) {
 	query := &models.NOAAQuery{
-		Station: station,
+		Station: fmt.Sprintf("%d", station),
 		Units:   units,
 	}
 	ds := NewDatasource()

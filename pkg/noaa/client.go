@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/url"
+	"strconv"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -47,9 +48,17 @@ func NewNOAAClient() NOAAClient {
 const layoutXXX = "20060102 15:04" // "yyyyMMdd HH:mm"
 
 func (c *NOAAClient) getQueryString(q *models.NOAAQuery) (string, error) {
+	if q.Station == "" {
+		return "", fmt.Errorf("missing station in query")
+	}
+	stationId, err := strconv.ParseInt(q.Station, 10, 64)
+	if err != nil {
+		return "", fmt.Errorf("invalid station id")
+	}
+
 	qstr := "time_zone=gmt&application=Grafana&format=json&datum=STND"
-	if q.Station < 100 {
-		return "", fmt.Errorf("missing station")
+	if stationId < 100 {
+		return "", fmt.Errorf("invalid stationId (too small)")
 	}
 	if q.Product == "" {
 		return "", fmt.Errorf("missing product")
@@ -77,7 +86,7 @@ func (c *NOAAClient) getQueryString(q *models.NOAAQuery) (string, error) {
 		qstr += fmt.Sprintf("&date=%s", q.Date)
 	}
 
-	qstr += fmt.Sprintf("&station=%d", q.Station)
+	qstr += fmt.Sprintf("&station=%d", stationId)
 	qstr += fmt.Sprintf("&product=%s", q.Product)
 	return qstr, nil
 }

@@ -20,5 +20,3 @@ cypress/report.json
 cypress/screenshots/actual
 cypress/videos/
 provisioning
-
-process.yml

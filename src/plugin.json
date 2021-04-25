@@ -38,6 +38,11 @@
     "version": "%VERSION%",
     "updated": "%TODAY%"
   },
+
+  "includes": [
+    { "type": "dashboard", "name": "Station info", "path": "dashboards/station.json" }
+  ],
+
   "dependencies": {
     "grafanaVersion": "7.3.0",
     "grafanaDependency": ">=7.3.0",
