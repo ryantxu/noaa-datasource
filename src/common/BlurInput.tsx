@@ -20,8 +20,6 @@ export class BlurInput extends PureComponent<Props> {
 
   render() {
     const { text, placeholder } = this.props;
-    return (
-      <Input defaultValue={text} onBlur={this.onBlur} onKeyPress={this.onKeyPress} css="" placeholder={placeholder} />
-    );
+    return <Input defaultValue={text} onBlur={this.onBlur} onKeyPress={this.onKeyPress} placeholder={placeholder} />;
   }
 }

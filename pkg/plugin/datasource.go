@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/ryantxu/noaa-datasource/pkg/models"
 	"github.com/ryantxu/noaa-datasource/pkg/noaa"
@@ -18,27 +18,31 @@ type Datasource struct {
 	Client noaa.NOAAClient
 }
 
-func NewDatasource() *Datasource {
+// NewRociInstance creates a new datasource instance.
+func NewNoaaInstance(s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 	return &Datasource{
 		Client: noaa.NewNOAAClient(),
-	}
+	}, nil
 }
 
-func GetDatasourceServeOpts() datasource.ServeOpts {
-	handler := NewDatasource()
-
-	return datasource.ServeOpts{
-		CheckHealthHandler:  handler,
-		QueryDataHandler:    handler,
-		CallResourceHandler: handler,
-	}
-}
+// Make sure RociDatasource implements required interfaces.
+// This is important to do since otherwise we will only get a
+// not implemented error response from plugin in runtime.
+var (
+	_ backend.QueryDataHandler      = (*Datasource)(nil)
+	_ backend.CheckHealthHandler    = (*Datasource)(nil)
+	_ backend.CallResourceHandler   = (*Datasource)(nil)
+	_ instancemgmt.InstanceDisposer = (*Datasource)(nil)
+)
 
 func (ds *Datasource) CheckHealth(ctx context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
 	return &backend.CheckHealthResult{
 		Status:  backend.HealthStatusOk,
 		Message: "TODO!!",
 	}, nil
+}
+
+func (ds *Datasource) Dispose() {
 }
 
 func (ds *Datasource) QueryData(ctx context.Context, req *backend.QueryDataRequest) (*backend.QueryDataResponse, error) {
@@ -134,7 +138,9 @@ func GetNextHighLow(station int64, units string) (*data.Frame, error) {
 		Station: fmt.Sprintf("%d", station),
 		Units:   units,
 	}
-	ds := NewDatasource()
+	ds := &Datasource{
+		Client: noaa.NewNOAAClient(),
+	}
 	frames, err := ds.getNextHighLow(context.Background(), query).Frames()
 	if err != nil || len(frames) < 1 {
 		return nil, err

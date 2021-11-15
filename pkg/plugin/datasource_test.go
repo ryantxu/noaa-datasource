@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetNextTide(t *testing.T) {
-	frame, err := GetNextHighLow(int32(9414750), "feet")
+	frame, err := GetNextHighLow(int64(9414750), "feet")
 	require.Nil(t, err)
 
 	rows, err := frame.RowLen()

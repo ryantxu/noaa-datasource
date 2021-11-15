@@ -30,7 +30,7 @@ var doWind testServerScenarioFn = func(t *testing.T) *testScenario {
 					To:   time.Date(2020, 10, 2, 0, 0, 0, 0, time.UTC),
 				},
 				JSON: testdata.SerializeStruct(t, &models.NOAAQuery{
-					Station: 9414750,
+					Station: "9414750",
 					Product: testFilePath,
 				}),
 			},
