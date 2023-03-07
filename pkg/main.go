@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	if err := datasource.Manage("noaa-datasource", plugin.NewNoaaInstance, datasource.ManageOpts{}); err != nil {
+	if err := datasource.Manage("ryantxu-noaa-datasource", plugin.NewNoaaInstance, datasource.ManageOpts{}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}

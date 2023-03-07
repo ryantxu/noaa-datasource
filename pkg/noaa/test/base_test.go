@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"strings"
 	"testing"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -27,12 +26,6 @@ type testScenario struct {
 
 func (ts *testScenario) run(t *testing.T) {
 	runTestScenario(t, ts)
-}
-
-// Golang's cwd is the executable file location.
-// hack to find the test data directory
-func testDataRelativePath(filename string) string {
-	return "../../testdata/" + filename
 }
 
 func runTestScenario(t *testing.T, scenario *testScenario) {
@@ -80,7 +73,7 @@ func runTestScenario(t *testing.T, scenario *testScenario) {
 
 		// write out the golden for all data responses
 		for i, dr := range qdr.Responses {
-			fname := fmt.Sprintf(testDataRelativePath("%s-%s.golden.txt"), scenario.goldenFileName, i)
+			fname := fmt.Sprintf("%s-%s.golden.txt", scenario.goldenFileName, i)
 
 			// temporary fix for golden files https://github.com/grafana/grafana-plugin-sdk-go/issues/213
 			for _, fr := range dr.Frames {
@@ -89,11 +82,7 @@ func runTestScenario(t *testing.T, scenario *testScenario) {
 				}
 			}
 
-			if err := experimental.CheckGoldenDataResponse(fname, &dr, true); err != nil {
-				if !strings.Contains(err.Error(), "no such file or directory") {
-					t.Fatal(err)
-				}
-			}
+			experimental.CheckGoldenJSONResponse(t, "../../testdata/", fname, &dr, true)
 		}
 	})
 }
