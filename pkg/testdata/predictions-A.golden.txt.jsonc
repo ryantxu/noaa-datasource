@@ -1,0 +1,82 @@
+//  🌟 This was machine generated.  Do not edit. 🌟
+//  
+//  Frame[0] {
+//      "typeVersion": [
+//          0,
+//          0
+//      ],
+//      "executedQueryString": "time_zone=gmt\u0026application=Grafana\u0026format=json\u0026datum=STND\u0026units=metric\u0026date=latest\u0026station=9414750\u0026product=predictions"
+//  }
+//  Name: predictions
+//  Dimensions: 2 Fields by 6 Rows
+//  +-------------------------------+-----------------+
+//  | Name: Time                    | Name: Value     |
+//  | Labels:                       | Labels:         |
+//  | Type: []time.Time             | Type: []float64 |
+//  +-------------------------------+-----------------+
+//  | 2020-12-14 06:00:00 +0000 UTC | 2.355           |
+//  | 2020-12-14 06:06:00 +0000 UTC | 2.394           |
+//  | 2020-12-14 06:12:00 +0000 UTC | 2.431           |
+//  | 2020-12-14 06:18:00 +0000 UTC | 2.467           |
+//  | 2020-12-14 06:24:00 +0000 UTC | 2.502           |
+//  | 2020-12-14 06:30:00 +0000 UTC | 2.534           |
+//  +-------------------------------+-----------------+
+//  
+//  
+//  🌟 This was machine generated.  Do not edit. 🌟
+{
+  "status": 200,
+  "frames": [
+    {
+      "schema": {
+        "name": "predictions",
+        "meta": {
+          "typeVersion": [
+            0,
+            0
+          ],
+          "executedQueryString": "time_zone=gmt\u0026application=Grafana\u0026format=json\u0026datum=STND\u0026units=metric\u0026date=latest\u0026station=9414750\u0026product=predictions"
+        },
+        "fields": [
+          {
+            "name": "Time",
+            "type": "time",
+            "typeInfo": {
+              "frame": "time.Time"
+            }
+          },
+          {
+            "name": "Value",
+            "type": "number",
+            "typeInfo": {
+              "frame": "float64"
+            },
+            "config": {
+              "unit": "lengthm"
+            }
+          }
+        ]
+      },
+      "data": {
+        "values": [
+          [
+            1607925600000,
+            1607925960000,
+            1607926320000,
+            1607926680000,
+            1607927040000,
+            1607927400000
+          ],
+          [
+            2.355,
+            2.394,
+            2.431,
+            2.467,
+            2.502,
+            2.534
+          ]
+        ]
+      }
+    }
+  ]
+}

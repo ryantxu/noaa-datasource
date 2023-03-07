@@ -1,0 +1,89 @@
+//  🌟 This was machine generated.  Do not edit. 🌟
+//  
+//  Frame[0] {
+//      "typeVersion": [
+//          0,
+//          0
+//      ],
+//      "executedQueryString": "time_zone=gmt\u0026application=Grafana\u0026format=json\u0026datum=STND\u0026units=metric\u0026begin_date=20201001+00%3A01\u0026end_date=20201002+00%3A03\u0026station=9414750\u0026product=high_low"
+//  }
+//  Name: high_low
+//  Dimensions: 3 Fields by 4 Rows
+//  +-------------------------------+-----------------+----------------+
+//  | Name: Time                    | Name: Value     | Name: HighLow  |
+//  | Labels:                       | Labels:         | Labels:        |
+//  | Type: []time.Time             | Type: []float64 | Type: []string |
+//  +-------------------------------+-----------------+----------------+
+//  | 2020-10-01 01:06:00 +0000 UTC | 1.408           | L              |
+//  | 2020-10-01 07:18:00 +0000 UTC | 2.902           | H              |
+//  | 2020-10-01 13:18:00 +0000 UTC | 1.276           | LL             |
+//  | 2020-10-01 19:48:00 +0000 UTC | 2.91            | HH             |
+//  +-------------------------------+-----------------+----------------+
+//  
+//  
+//  🌟 This was machine generated.  Do not edit. 🌟
+{
+  "status": 200,
+  "frames": [
+    {
+      "schema": {
+        "name": "high_low",
+        "meta": {
+          "typeVersion": [
+            0,
+            0
+          ],
+          "executedQueryString": "time_zone=gmt\u0026application=Grafana\u0026format=json\u0026datum=STND\u0026units=metric\u0026begin_date=20201001+00%3A01\u0026end_date=20201002+00%3A03\u0026station=9414750\u0026product=high_low"
+        },
+        "fields": [
+          {
+            "name": "Time",
+            "type": "time",
+            "typeInfo": {
+              "frame": "time.Time"
+            }
+          },
+          {
+            "name": "Value",
+            "type": "number",
+            "typeInfo": {
+              "frame": "float64"
+            },
+            "config": {
+              "unit": "lengthm"
+            }
+          },
+          {
+            "name": "HighLow",
+            "type": "string",
+            "typeInfo": {
+              "frame": "string"
+            }
+          }
+        ]
+      },
+      "data": {
+        "values": [
+          [
+            1601514360000,
+            1601536680000,
+            1601558280000,
+            1601581680000
+          ],
+          [
+            1.408,
+            2.902,
+            1.276,
+            2.91
+          ],
+          [
+            "L ",
+            "H ",
+            "LL",
+            "HH"
+          ]
+        ]
+      }
+    }
+  ]
+}
