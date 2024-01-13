@@ -18,8 +18,8 @@ type Datasource struct {
 	Client noaa.NOAAClient
 }
 
-// NewRociInstance creates a new datasource instance.
-func NewNoaaInstance(s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+// NewNoaaInstance creates a new datasource instance.
+func NewNoaaInstance(_ context.Context, s backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
 	return &Datasource{
 		Client: noaa.NewNOAAClient(),
 	}, nil
