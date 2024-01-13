@@ -2,8 +2,8 @@ package test
 
 import (
 	"context"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/grafana/grafana-plugin-sdk-go/experimental"
 )
@@ -18,7 +18,7 @@ func NewMockClient(filePath string) experimental.Client {
 
 // Fetch performs an HTTP GET and returns the body as []byte to prep for marshalling.
 func (c *mockClient) Fetch(ctx context.Context, uriPath, uriQuery string) ([]byte, error) {
-	return ioutil.ReadFile(c.filePath)
+	return os.ReadFile(c.filePath)
 }
 
 // Get performs an HTTP GET and returns the response.

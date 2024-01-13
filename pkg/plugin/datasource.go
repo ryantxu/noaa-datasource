@@ -25,7 +25,7 @@ func NewNoaaInstance(_ context.Context, s backend.DataSourceInstanceSettings) (i
 	}, nil
 }
 
-// Make sure RociDatasource implements required interfaces.
+// Make sure NoaaDatasource implements required interfaces.
 // This is important to do since otherwise we will only get a
 // not implemented error response from plugin in runtime.
 var (
